@@ -12,4 +12,4 @@
 
 - **[Official Website](https://github.com/twihno/3Dprintcontroller)**
 - **[Documentation](https://github.com/twihno/3Dprintcontroller/wiki)**
-- ![Features](https://github.com/twihno/3dprintcontroller/wiki/Features)
+- ![Features](https://github.com/twihno/3dprintcontroller/wiki/Featurelist)
