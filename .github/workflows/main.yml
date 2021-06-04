@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    paths-ignore:
+    - '*.md'
+    - '*.txt'
+    - '*.drawio'
+  pull_request:
+
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+    
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+
+      - name: Install PlatformIO Core
+        run: |
+          pip3 install -U platformio
+          sudo ln -s ~/.platformio/penv/bin/platformio /usr/local/bin/platformio
+          sudo ln -s ~/.platformio/penv/bin/pio /usr/local/bin/pio
+          sudo ln -s ~/.platformio/penv/bin/piodebuggdb /usr/local/bin/piodebuggdb 
+
+      #- name: Install linter
+      #  run: sudo apt install clang-tidy 
+
+      #- name: Lint files
+      #  run: clang-tidy *.cpp *.hpp
+
+      - name: Compile project
+        run: pio run -v -e megaatmega2560
+        
+  test:
+    #needs: [build]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+
+      - name: Install gcc
+        run: sudo apt install build-essential -y
+
+      - name: Install PlatformIO Core
+        run: |
+          pip3 install -U platformio
+          sudo ln -s ~/.platformio/penv/bin/platformio /usr/local/bin/platformio
+          sudo ln -s ~/.platformio/penv/bin/pio /usr/local/bin/pio
+          sudo ln -s ~/.platformio/penv/bin/piodebuggdb /usr/local/bin/piodebuggdb 
+
+      #- name: Compile project
+      #  run: pio run -v
+        
+      - name: Test project
+        run: pio test -v -e native
