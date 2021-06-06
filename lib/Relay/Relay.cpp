@@ -19,12 +19,12 @@ void Relay::init()
 
 void Relay::on()
 {
-    this->setState(1);
+    this->setState(true);
 }
 
 void Relay::off()
 {
-    this->setState(0);
+    this->setState(false);
 }
 
 void Relay::toggle()
@@ -34,7 +34,7 @@ void Relay::toggle()
 
 bool Relay::isOn()
 {
-    return this->getState();
+    return this->state;
 }
 
 void Relay::setState(bool desired_state)
