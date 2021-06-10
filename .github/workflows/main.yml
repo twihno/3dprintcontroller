@@ -56,9 +56,6 @@ jobs:
           sudo ln -s ~/.platformio/penv/bin/platformio /usr/local/bin/platformio
           sudo ln -s ~/.platformio/penv/bin/pio /usr/local/bin/pio
           sudo ln -s ~/.platformio/penv/bin/piodebuggdb /usr/local/bin/piodebuggdb 
-
-      #- name: Compile project
-      #  run: pio run -v
       
       - name: Install native platform
         run: pio platform install native
