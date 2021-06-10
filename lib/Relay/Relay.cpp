@@ -1,6 +1,6 @@
 #include "Relay.hpp"
 
-Relay::Relay(unsigned int relay_pin, bool mode)
+Relay::Relay(uint8_t relay_pin, bool mode)
 {
     pin = relay_pin;
 
