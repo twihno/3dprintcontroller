@@ -1,7 +1,7 @@
 #ifndef PULLUPINPUT_HPP_INCLUDED
 #define PULLUPINPUT_HPP_INCLUDED
 
-#include <Arduino.h>
+#include "Arduino.h"
 
 class PullupInput
 {

@@ -34,7 +34,7 @@ void Relay::toggle()
 
 bool Relay::isOn()
 {
-    return this->getState();
+    return this->state;
 }
 
 void Relay::setState(bool desired_state)
