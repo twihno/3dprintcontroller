@@ -1,7 +1,7 @@
 #ifndef RELAY_HPP_INCLUDED
 #define RELAY_HPP_INCLUDED
 
-#include "Arduino.h"
+#include <Arduino.h>
 
 class Relay
 {
