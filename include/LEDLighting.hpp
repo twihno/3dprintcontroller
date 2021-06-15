@@ -16,8 +16,8 @@ private:
 
 public:
     LEDLighting();
-    void tick();
-    void setOn();
+    void tick(uint32_t);
+    void setOn(uint32_t);
     void setOff();
     bool isOn();
 };

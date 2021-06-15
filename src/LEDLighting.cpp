@@ -1,5 +1,4 @@
 #include <stdint.h> // uint32_t
-#include <Arduino.h> // millis()
 
 #include "Constants.hpp" // LEDLIGHTING_TIMEOUT
 #include "LEDLighting.hpp"
@@ -9,9 +8,9 @@ LEDLighting::LEDLighting()
     this->state = OFF;
 }
 
-void LEDLighting::tick()
+void LEDLighting::tick(uint32_t millis)
 {
-    if(this->state == ON && millis() - timestamp > LEDLIGHTING_TIMEOUT)
+    if(this->state == ON && millis - timestamp > LEDLIGHTING_TIMEOUT)
         this->state = OFF;
 }
 
@@ -20,10 +19,10 @@ bool LEDLighting::isOn()
     return this->state == ON;
 }
 
-void LEDLighting::setOn()
+void LEDLighting::setOn(uint32_t millis)
 {
     this->state = ON;
-    this->timestamp = millis();
+    this->timestamp = millis;
 }
 
 void LEDLighting::setOff()
