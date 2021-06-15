@@ -2,14 +2,15 @@
 #define PULLUPINPUT_HPP_INCLUDED
 
 #include <Arduino.h>
+#include <stdint.h>
 
 class PullupInput
 {
 private:
-    unsigned int pin;
+    uint8_t pin;
 
 public:
-    PullupInput(unsigned int input_pin);
+    PullupInput(uint8_t input_pin);
 
     bool isOn();
 

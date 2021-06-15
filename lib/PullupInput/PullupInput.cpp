@@ -1,6 +1,6 @@
 #include "PullupInput.hpp"
 
-PullupInput::PullupInput(unsigned int input_pin)
+PullupInput::PullupInput(uint8_t input_pin)
 {
     pinMode(pin, INPUT_PULLUP);
     pin = input_pin;
