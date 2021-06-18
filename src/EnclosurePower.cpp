@@ -11,9 +11,11 @@ EnclosurePower::EnclosurePower()
 
 void EnclosurePower::tick(uint32_t millis)
 {
-    bool timedOut = millis - timestamp > ENCLOSUREPOWER_TIMEOUT; 
+    bool timedOut = millis > timestamp; 
     if(isOn() && this->autoOff && timedOut)
+    {
         this->state = EnclosurePowerState::OFF;
+    }
 }
 
 bool EnclosurePower::isOn()
@@ -24,7 +26,7 @@ bool EnclosurePower::isOn()
 void EnclosurePower::setOn(uint32_t millis)
 {
     this->state = EnclosurePowerState::ON;
-    this->timestamp = millis;
+    this->timestamp = millis + ENCLOSUREPOWER_TIMEOUT;
 }
 
 void EnclosurePower::setOff()
