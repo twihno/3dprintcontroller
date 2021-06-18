@@ -1,9 +1,13 @@
 #include <Arduino.h>
 
-void setup() {
-  // put your setup code here, to run once:
-}
+#include "PullupInput.hpp"
+#include "Relay.hpp"
+#include "EnclosurePower.hpp"
+#include "LEDLighting.hpp"
 
-void loop() {
-  // put your main code here, to run repeatedly:
-}
+EnclosurePower enclosurePower;
+LEDLighting ledLighting;
+
+void setup() {}
+
+void loop() {}
