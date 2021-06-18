@@ -5,27 +5,28 @@
 
 LEDLighting::LEDLighting()
 {
-    this->state = OFF;
+    this->state = LEDLightingState::OFF;
 }
 
 void LEDLighting::tick(uint32_t millis)
 {
-    if(this->state == ON && millis - timestamp > LEDLIGHTING_TIMEOUT)
-        this->state = OFF;
+    bool timedOut = millis - timestamp > LEDLIGHTING_TIMEOUT; 
+    if(isOn() && timedOut)
+        this->state = LEDLightingState::OFF;
 }
 
 bool LEDLighting::isOn()
 {
-    return this->state == ON;
+    return this->state == LEDLightingState::ON;
 }
 
 void LEDLighting::setOn(uint32_t millis)
 {
-    this->state = ON;
+    this->state = LEDLightingState::ON;
     this->timestamp = millis;
 }
 
 void LEDLighting::setOff()
 {
-    this->state = OFF;
+    this->state = LEDLightingState::OFF;
 }

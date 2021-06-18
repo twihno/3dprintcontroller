@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-enum LEDLightingState
+enum class LEDLightingState
 {
     ON, OFF
 };
