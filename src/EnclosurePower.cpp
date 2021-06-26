@@ -6,32 +6,100 @@
 EnclosurePower::EnclosurePower()
 {
     this->state = EnclosurePowerState::OFF;
+    this->printerState = PrinterState::STANDBY;
     this->autoOff = true;
 }
 
-void EnclosurePower::tick(uint32_t millis)
+void EnclosurePower::tick(uint32_t millis, bool isPrinterOn)
 {
-    bool timedOut = millis > timestamp; 
-    if(isOn() && this->autoOff && timedOut)
+    if (printerState == PrinterState::RUNNING)
     {
-        this->state = EnclosurePowerState::OFF;
+        switch (state)
+        {
+        case EnclosurePowerState::OFF:
+            // unreachable
+            break;
+        case EnclosurePowerState::ON:
+            if (!isPrinterOn)
+            {
+                if (autoOff)
+                {
+                    this->timestamp = millis + ENCLOSUREPOWER_TIMEOUT;
+                    this->printerState = PrinterState::STANDBY;
+                    this->state = EnclosurePowerState::SHUTDOWN;
+                }
+                else
+                {
+                    this->printerState = PrinterState::STANDBY;
+                }
+            }
+            break;
+        case EnclosurePowerState::SHUTDOWN:
+            // not in use
+            break;
+        }
+    }
+    else
+    {
+        switch (state)
+        {
+        case EnclosurePowerState::OFF:
+            // do nothing (for now)
+            break;
+        case EnclosurePowerState::ON:
+            if (isPrinterOn)
+            {
+                this->printerState = PrinterState::RUNNING;
+            }
+            break;
+        case EnclosurePowerState::SHUTDOWN:
+            if (isPrinterOn)
+            {
+                this->printerState = PrinterState::RUNNING;
+                this->state = EnclosurePowerState::ON;
+            }
+            else if (millis > timestamp)
+            {
+                this->state = EnclosurePowerState::OFF;
+            }
+            break;
+        }
     }
 }
 
-bool EnclosurePower::isOn()
+void EnclosurePower::abort()
 {
-    return this->state == EnclosurePowerState::ON;
+    if (this->state == EnclosurePowerState::SHUTDOWN && this->printerState == PrinterState::STANDBY)
+    {
+        this->printerState = PrinterState::STANDBY;
+        this->state = EnclosurePowerState::ON;
+    }
 }
 
-void EnclosurePower::setOn(uint32_t millis)
+bool EnclosurePower::isPowerActive()
+{
+    return this->state != EnclosurePowerState::OFF;
+}
+
+bool EnclosurePower::isShutdown()
+{
+    return this->state == EnclosurePowerState::SHUTDOWN;
+}
+
+bool EnclosurePower::isPrinterRunning()
+{
+    return this->printerState == PrinterState::RUNNING;
+}
+
+void EnclosurePower::setOn()
 {
     this->state = EnclosurePowerState::ON;
-    this->timestamp = millis + ENCLOSUREPOWER_TIMEOUT;
 }
 
 void EnclosurePower::setOff()
 {
     this->state = EnclosurePowerState::OFF;
+    this->printerState = PrinterState::STANDBY;
 }
 
 void EnclosurePower::enableAutoOff()
@@ -42,4 +110,21 @@ void EnclosurePower::enableAutoOff()
 void EnclosurePower::disableAutoOff()
 {
     this->autoOff = false;
+}
+
+uint32_t EnclosurePower::getShutdownTimer(uint32_t millis)
+{
+    if (millis > timestamp)
+    {
+        return 0;
+    }
+    else
+    {
+        return timestamp - millis;
+    }
+}
+
+bool EnclosurePower::isAutoOff()
+{
+    return this->autoOff;
 }
