@@ -1,7 +1,9 @@
 #ifndef CONSTANTS_HPP_INCLUDED
 #define CONSTANTS_HPP_INCLUDED
 
-#define LEDLIGHTING_TIMEOUT 10000 // timeout of LEDLighting in milliseconds
-#define ENCLOSUREPOWER_TIMEOUT 10000 // timeout of EnclosurePower in milliseconds
+//timeouts in ms
+#define LEDLIGHTING_TIMEOUT 10000
+#define ENCLOSUREPOWER_TIMEOUT 10000
+#define ENCLOSUREVENTILATION_TIMEOUT 10000
 
 #endif
