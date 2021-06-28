@@ -5,22 +5,16 @@
 
 enum class EnclosurePowerState
 {
-    ON,
+    RUNNING,
+    STANDBY,
     SHUTDOWN,
     OFF
-};
-
-enum class PrinterState
-{
-    RUNNING,
-    STANDBY
 };
 
 class EnclosurePower
 {
 private:
     EnclosurePowerState state;
-    PrinterState printerState;
     bool autoOff;
     uint32_t timestamp;
 
