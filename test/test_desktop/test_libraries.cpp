@@ -8,6 +8,7 @@
 #include "PullupInput.hpp"
 #include "LEDLighting.hpp"
 #include "EnclosurePower.hpp"
+#include "Ventilation.hpp"
 
 using namespace fakeit;
 
@@ -340,6 +341,103 @@ void test_enclosurepower_copycat(void)
     TEST_ASSERT_FALSE(enclosurePower.isShutdown());
 }
 
+void test_ventilation(void)
+{
+    Ventilation ventilation = Ventilation();
+
+    // Test initial state
+    TEST_ASSERT_FALSE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_FALSE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_FALSE(ventilation.isShutdown());
+
+    // Test recursive transitions
+    ventilation.tick(0, false, false);
+    TEST_ASSERT_FALSE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_FALSE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_FALSE(ventilation.isShutdown());
+
+    ventilation.tick(0, true, false);
+    TEST_ASSERT_FALSE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_FALSE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_FALSE(ventilation.isShutdown());
+
+    ventilation.tick(0, false, false);
+    TEST_ASSERT_FALSE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_FALSE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_FALSE(ventilation.isShutdown());
+
+    // Test transition from OFF to ON
+    ventilation.tick(0, false, true);
+    TEST_ASSERT_TRUE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_TRUE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_FALSE(ventilation.isShutdown());
+
+    // Test recursive transitions
+    ventilation.tick(0, false, true);
+    TEST_ASSERT_TRUE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_TRUE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_FALSE(ventilation.isShutdown());
+
+    ventilation.tick(0, true, true);
+    TEST_ASSERT_TRUE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_FALSE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_FALSE(ventilation.isShutdown());
+
+    ventilation.tick(0, false, true);
+    TEST_ASSERT_TRUE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_TRUE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_FALSE(ventilation.isShutdown());
+
+    // Test transition from ON to SHUTDOWN
+    ventilation.tick(0, false, false);
+    TEST_ASSERT_TRUE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_TRUE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_TRUE(ventilation.isShutdown());
+
+    // Test recursive transitions
+    ventilation.tick(0, false, false);
+    TEST_ASSERT_TRUE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_TRUE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_TRUE(ventilation.isShutdown());
+
+    ventilation.tick(0, true, false);
+    TEST_ASSERT_TRUE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_FALSE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_TRUE(ventilation.isShutdown());
+
+    ventilation.tick(0, false, false);
+    TEST_ASSERT_TRUE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_TRUE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_TRUE(ventilation.isShutdown());
+
+    // Test transition from SHUTDOWN to ON
+    ventilation.tick(0, false, true);
+    TEST_ASSERT_TRUE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_TRUE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_FALSE(ventilation.isShutdown());
+
+    // Test shutdown timer
+    ventilation.tick(0, false, false);
+    TEST_ASSERT_TRUE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_TRUE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_TRUE(ventilation.isShutdown());
+
+    ventilation.tick(ENCLOSUREVENTILATION_TIMEOUT - 1, false, false);
+    TEST_ASSERT_TRUE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_TRUE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_TRUE(ventilation.isShutdown());
+
+    ventilation.tick(ENCLOSUREVENTILATION_TIMEOUT, false, false);
+    TEST_ASSERT_TRUE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_TRUE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_TRUE(ventilation.isShutdown());
+
+    ventilation.tick(ENCLOSUREVENTILATION_TIMEOUT + 1, false, false);
+    TEST_ASSERT_FALSE(ventilation.isEnclosureVentilationOn());
+    TEST_ASSERT_FALSE(ventilation.isExternalVentilationReq());
+    TEST_ASSERT_FALSE(ventilation.isShutdown());
+}
+
 void test_ledlighting(void)
 {
     LEDLighting ledLighting;
@@ -374,6 +472,7 @@ int main(int argc, char **argv)
     RUN_TEST(test_pullupinput);
     RUN_TEST(test_enclosurepower_auto_off);
     RUN_TEST(test_enclosurepower_copycat);
+    RUN_TEST(test_ventilation);
     RUN_TEST(test_ledlighting);
 
     UNITY_END();

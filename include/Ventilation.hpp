@@ -6,13 +6,7 @@
 enum class EnclosureVentilationState
 {
     ON,
-    OFF
-};
-
-enum class ExternalVentilationState
-{
-    ON,
-    EXTERNAL_ON,
+    SHUTDOWN,
     OFF
 };
 
@@ -20,17 +14,16 @@ class Ventilation
 {
 private:
     EnclosureVentilationState enclosureState;
-    ExternalVentilationState externalState;
-    bool autoOff;
+    bool externalVentilationReq;
     uint32_t timestamp;
+    inline void updateExternalVentilation(bool internalVentilationOn, bool externalSwitchOn);
 
 public:
     Ventilation();
-    void enableAutoOff();
-    void disableAutoOff();
-    void tick(uint32_t, bool);
-    bool isEnclosureOn();
-    bool isExternalOn();
+    void tick(uint32_t millis, bool externalSwitchOn, bool isPrinterOn);
+    bool isEnclosureVentilationOn();
+    bool isExternalVentilationReq();
+    bool isShutdown();
 };
 
 #endif

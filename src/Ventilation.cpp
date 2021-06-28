@@ -6,40 +6,60 @@
 Ventilation::Ventilation()
 {
     this->enclosureState = EnclosureVentilationState::OFF;
-    this->externalState = ExternalVentilationState::OFF;
-    this->autoOff = true;
+    externalVentilationReq = false;
 }
 
-/*void Ventilation::tick(uint32_t millis, bool externalSwitchOn)
+void Ventilation::tick(uint32_t millis, bool externalSwitchOn, bool isPrinterOn)
 {
-    if (externalSwitchOn)
+    switch (enclosureState)
     {
-        externalState = ExternalVentilationState::EXTERNAL_ON;
+    case EnclosureVentilationState::OFF:
+        if (isPrinterOn)
+        {
+            enclosureState = EnclosureVentilationState::ON;
+        }
+        break;
+    case EnclosureVentilationState::ON:
+        if (!isPrinterOn)
+        {
+            timestamp = millis + ENCLOSUREVENTILATION_TIMEOUT;
+            enclosureState = EnclosureVentilationState::SHUTDOWN;
+        }
+        break;
+    case EnclosureVentilationState::SHUTDOWN:
+        if (isPrinterOn)
+        {
+            enclosureState = EnclosureVentilationState::ON;
+        }
+        else
+        {
+            if (millis > timestamp)
+            {
+                enclosureState = EnclosureVentilationState::OFF;
+            }
+        }
+        break;
     }
 
-    bool timedOut = millis > timestamp;
-    if (isEnclosureOn() && this->autoOff && timedOut)
-    {
-        this->state = EnclosurePowerState::OFF;
-    }
-}*/
-
-bool Ventilation::isEnclosureOn()
-{
-    return this->enclosureState == EnclosureVentilationState::ON;
+    updateExternalVentilation(enclosureState != EnclosureVentilationState::OFF, externalSwitchOn);
 }
 
-bool Ventilation::isExternalOn()
+inline void Ventilation::updateExternalVentilation(bool internalVentilationOn, bool externalSwitchOn)
 {
-    return this->externalState == ExternalVentilationState::ON;
+    externalVentilationReq = (internalVentilationOn && !externalSwitchOn);
 }
 
-void Ventilation::enableAutoOff()
+bool Ventilation::isEnclosureVentilationOn() // for relay
 {
-    this->autoOff = true;
+    return !(this->enclosureState == EnclosureVentilationState::OFF);
 }
 
-void Ventilation::disableAutoOff()
+bool Ventilation::isExternalVentilationReq() // for relay
 {
-    this->autoOff = false;
+    return this->externalVentilationReq;
+}
+
+bool Ventilation::isShutdown()
+{
+    return this->enclosureState == EnclosureVentilationState::SHUTDOWN;
 }
