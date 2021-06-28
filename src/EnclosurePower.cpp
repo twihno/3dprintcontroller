@@ -9,24 +9,76 @@ EnclosurePower::EnclosurePower()
     this->autoOff = true;
 }
 
-void EnclosurePower::tick(uint32_t millis)
+void EnclosurePower::tick(uint32_t millis, bool isPrinterOn)
 {
-    bool timedOut = millis > timestamp; 
-    if(isOn() && this->autoOff && timedOut)
+
+    switch (state)
     {
-        this->state = EnclosurePowerState::OFF;
+    case EnclosurePowerState::RUNNING:
+        if (!isPrinterOn)
+        {
+            if (autoOff)
+            {
+                this->timestamp = millis + ENCLOSUREPOWER_TIMEOUT;
+                this->state = EnclosurePowerState::SHUTDOWN;
+            }
+            else
+            {
+                this->state = EnclosurePowerState::STANDBY;
+            }
+        }
+        break;
+    case EnclosurePowerState::STANDBY:
+        if (isPrinterOn)
+        {
+            this->state = EnclosurePowerState::RUNNING;
+        }
+        break;
+    case EnclosurePowerState::SHUTDOWN:
+        if (isPrinterOn)
+        {
+            this->state = EnclosurePowerState::RUNNING;
+        }
+        else if (millis > timestamp)
+        {
+            this->state = EnclosurePowerState::OFF;
+        }
+        break;
+    case EnclosurePowerState::OFF:
+        // do nothing (for now)
+        break;
     }
 }
 
-bool EnclosurePower::isOn()
+void EnclosurePower::abort()
 {
-    return this->state == EnclosurePowerState::ON;
+    if (this->state == EnclosurePowerState::SHUTDOWN)
+    {
+        this->state = EnclosurePowerState::STANDBY;
+    }
 }
 
-void EnclosurePower::setOn(uint32_t millis)
+bool EnclosurePower::isPowerActive()
 {
-    this->state = EnclosurePowerState::ON;
-    this->timestamp = millis + ENCLOSUREPOWER_TIMEOUT;
+    return this->state != EnclosurePowerState::OFF;
+}
+
+bool EnclosurePower::isShutdown()
+{
+    return this->state == EnclosurePowerState::SHUTDOWN;
+}
+
+bool EnclosurePower::isPrinterRunning()
+{
+    return this->state == EnclosurePowerState::RUNNING;
+}
+
+void EnclosurePower::setOn()
+{
+    if (!(this->state == EnclosurePowerState::RUNNING))
+    {
+        this->state = EnclosurePowerState::STANDBY;
+    }
 }
 
 void EnclosurePower::setOff()
@@ -42,4 +94,21 @@ void EnclosurePower::enableAutoOff()
 void EnclosurePower::disableAutoOff()
 {
     this->autoOff = false;
+}
+
+uint32_t EnclosurePower::getShutdownTimer(uint32_t millis)
+{
+    if (millis > timestamp)
+    {
+        return 0;
+    }
+    else
+    {
+        return timestamp - millis;
+    }
+}
+
+bool EnclosurePower::isAutoOff()
+{
+    return this->autoOff;
 }

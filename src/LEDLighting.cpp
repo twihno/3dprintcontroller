@@ -10,8 +10,7 @@ LEDLighting::LEDLighting()
 
 void LEDLighting::tick(uint32_t millis)
 {
-    bool timedOut = millis > timestamp;
-    if(isOn() && timedOut)
+    if (isOn() && (millis > timestamp))
     {
         this->state = LEDLightingState::OFF;
     }
