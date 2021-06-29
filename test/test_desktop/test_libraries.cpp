@@ -9,6 +9,7 @@
 #include "LEDLighting.hpp"
 #include "EnclosurePower.hpp"
 #include "Ventilation.hpp"
+#include "PrinterInput.hpp"
 
 using namespace fakeit;
 
@@ -68,6 +69,57 @@ void test_pullupinput(void)
 
     TEST_ASSERT_TRUE(pullinput.isOff());
     TEST_ASSERT_FALSE(pullinput.isOff());
+}
+
+void test_printerinput(void)
+{
+    When(Method(ArduinoFake(), pinMode)).AlwaysReturn();
+    When(Method(ArduinoFake(), digitalWrite)).AlwaysReturn();
+    When(Method(ArduinoFake(), digitalRead)).Return(0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1);
+
+    PrinterInput printerInput = PrinterInput(13);
+
+    TEST_ASSERT_FALSE(printerInput.isOn());
+
+    // Check timeout fail during startup
+    printerInput.read(0);
+    TEST_ASSERT_FALSE(printerInput.isOn());
+
+    printerInput.read(PRINTER_ON_TOLERANCE);
+    TEST_ASSERT_FALSE(printerInput.isOn());
+
+    printerInput.read(PRINTER_ON_TOLERANCE + 1);
+    TEST_ASSERT_FALSE(printerInput.isOn());
+
+    // Check timeout success during startup
+    printerInput.read(0);
+    TEST_ASSERT_FALSE(printerInput.isOn());
+
+    printerInput.read(PRINTER_ON_TOLERANCE);
+    TEST_ASSERT_FALSE(printerInput.isOn());
+
+    printerInput.read(PRINTER_ON_TOLERANCE + 1);
+    TEST_ASSERT_TRUE(printerInput.isOn());
+
+    // Check timeout fail during shutdown
+    printerInput.read(0);
+    TEST_ASSERT_TRUE(printerInput.isOn());
+
+    printerInput.read(PRINTER_OFF_TOLERANCE);
+    TEST_ASSERT_TRUE(printerInput.isOn());
+    
+    printerInput.read(PRINTER_OFF_TOLERANCE + 1);
+    TEST_ASSERT_TRUE(printerInput.isOn());
+
+    // Check timeout success during shutdown
+    printerInput.read(0);
+    TEST_ASSERT_TRUE(printerInput.isOn());
+
+    printerInput.read(PRINTER_OFF_TOLERANCE);
+    TEST_ASSERT_TRUE(printerInput.isOn());
+
+    printerInput.read(PRINTER_OFF_TOLERANCE + 1);
+    TEST_ASSERT_FALSE(printerInput.isOn());
 }
 
 void test_enclosurepower_auto_off(void)
@@ -470,6 +522,7 @@ int main(int argc, char **argv)
     RUN_TEST(test_setup);
     RUN_TEST(test_relay);
     RUN_TEST(test_pullupinput);
+    RUN_TEST(test_printerinput);
     RUN_TEST(test_enclosurepower_auto_off);
     RUN_TEST(test_enclosurepower_copycat);
     RUN_TEST(test_ventilation);

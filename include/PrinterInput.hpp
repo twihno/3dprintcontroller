@@ -12,17 +12,16 @@ enum class PrinterState
     OFF
 };
 
-class PrinterInput
+class PrinterInput : public PullupInput
 {
 private:
-    PrinterState state;
-    //extern PullupInput pullupInput;
+    PrinterState state = PrinterState::OFF;
     uint32_t timestamp;
 
 public:
-    PrinterInput(uint8_t input_pin);
+    PrinterInput(uint8_t input_pin) : PullupInput(input_pin) {};
     void read(uint32_t millis);
-    bool isOn();
+    bool isOn(), isOff();
 };
 
 #endif
