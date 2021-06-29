@@ -3,11 +3,7 @@
 #include "Constants.hpp" // ENCLOSUREPOWER_TIMEOUT
 #include "EnclosurePower.hpp"
 
-EnclosurePower::EnclosurePower()
-{
-    this->state = EnclosurePowerState::OFF;
-    this->autoOff = true;
-}
+EnclosurePower::EnclosurePower(void) = default;
 
 void EnclosurePower::tick(uint32_t millis, bool isPrinterOn)
 {
