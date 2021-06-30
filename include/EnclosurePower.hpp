@@ -14,19 +14,19 @@ enum class EnclosurePowerState
 class EnclosurePower
 {
 private:
-    EnclosurePowerState state;
-    bool autoOff;
-    uint32_t timestamp;
+    EnclosurePowerState state = EnclosurePowerState::OFF;
+    bool autoOff = true;
+    uint32_t timestamp = 0;
 
 public:
-    EnclosurePower();
+    EnclosurePower(void);
     void enableAutoOff();
     void disableAutoOff();
-    void tick(uint32_t, bool);
+    void tick(uint32_t millis, bool isPrinterOn);
     void abort();
     void setOn();
     void setOff();
-    uint32_t getShutdownTimer(uint32_t);
+    uint32_t getShutdownTimer(uint32_t millis);
     bool isPowerActive();
     bool isShutdown();
     bool isPrinterRunning();

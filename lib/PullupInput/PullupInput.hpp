@@ -10,11 +10,10 @@ private:
     uint8_t pin;
 
 public:
+    PullupInput(void);
     PullupInput(uint8_t input_pin);
 
-    bool isOn();
-
-    bool isOff();
+    virtual bool isOn(), isOff();
 };
 
 #endif
