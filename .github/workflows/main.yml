@@ -50,8 +50,27 @@ jobs:
       - name: Compile project
         run: pio run -v -e uno
 
+  check_code:
+    needs: [build_mega]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+    
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+
+      - name: Install PlatformIO Core
+        run: |
+          pip3 install -U platformio
+          sudo ln -s ~/.platformio/penv/bin/platformio /usr/local/bin/platformio
+          sudo ln -s ~/.platformio/penv/bin/pio /usr/local/bin/pio
+          sudo ln -s ~/.platformio/penv/bin/piodebuggdb /usr/local/bin/piodebuggdb 
+
+      - name: Check project
+        run: pio check -e megaatmega2560
+
   test:
-    #needs: [build]
     runs-on: ubuntu-latest
 
     steps:

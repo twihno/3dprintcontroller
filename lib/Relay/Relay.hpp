@@ -15,8 +15,6 @@ private:
 
     void init();
 
-    void setState(bool desired_state); //Sets the relay state.
-
 public:
     Relay(uint8_t relay_pin, //Arduino pin that the Relay is connected to
           bool mode          //Logic mode (default: high-active, i.e. high level means on).
@@ -25,6 +23,8 @@ public:
     void on(); //Turns the relay on.
 
     void off(); //Turns the relay off.
+
+    void setState(bool desired_state); //Sets the relay state.
 
     void toggle(); //Toggles the relay state.
 

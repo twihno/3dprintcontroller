@@ -16,12 +16,13 @@ class PrinterInput : public PullupInput
 {
 private:
     PrinterState state = PrinterState::OFF;
-    uint32_t timestamp;
+    uint32_t timestamp = 0;
 
 public:
-    PrinterInput(uint8_t input_pin) : PullupInput(input_pin) {};
+    explicit PrinterInput(uint8_t input_pin) : PullupInput(input_pin){};
     void read(uint32_t millis);
-    bool isOn(), isOff();
+    bool isOn() override;
+    bool isOff() override;
 };
 
 #endif

@@ -10,9 +10,10 @@ private:
     bool state;
 
 public:
-    CachedPullupInput(uint8_t input_pin);
+    explicit CachedPullupInput(uint8_t input_pin);
     void read(void);
-    bool isOn(void), isOff(void);
+    bool isOn(void) override;
+    bool isOff(void) override;
 };
 
 #endif
