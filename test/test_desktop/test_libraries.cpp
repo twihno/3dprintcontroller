@@ -10,6 +10,7 @@
 #include "EnclosurePower.hpp"
 #include "Ventilation.hpp"
 #include "PrinterInput.hpp"
+#include "CachedPullupInput.hpp"
 
 using namespace fakeit;
 
@@ -69,6 +70,31 @@ void test_pullupinput(void)
 
     TEST_ASSERT_TRUE(pullinput.isOff());
     TEST_ASSERT_FALSE(pullinput.isOff());
+}
+
+void test_cachedpullupinput(void)
+{
+    When(Method(ArduinoFake(), pinMode)).AlwaysReturn();
+    When(Method(ArduinoFake(), digitalWrite)).AlwaysReturn();
+    When(Method(ArduinoFake(), digitalRead)).Return(1, 0, 1, 0);
+
+    CachedPullupInput cpullinput = CachedPullupInput(13);
+
+    // Test input
+    cpullinput.read();
+    TEST_ASSERT_FALSE(cpullinput.isOn());
+
+    cpullinput.read();
+    TEST_ASSERT_TRUE(cpullinput.isOn());
+
+    cpullinput.read();
+    TEST_ASSERT_TRUE(cpullinput.isOff());
+
+    cpullinput.read();
+    TEST_ASSERT_FALSE(cpullinput.isOff());
+
+    // Test persistence
+    TEST_ASSERT_FALSE(cpullinput.isOff());
 }
 
 void test_printerinput(void)
@@ -522,6 +548,7 @@ int main(int argc, char **argv)
     RUN_TEST(test_setup);
     RUN_TEST(test_relay);
     RUN_TEST(test_pullupinput);
+    RUN_TEST(test_cachedpullupinput);
     RUN_TEST(test_printerinput);
     RUN_TEST(test_enclosurepower_auto_off);
     RUN_TEST(test_enclosurepower_copycat);
