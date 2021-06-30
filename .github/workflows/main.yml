@@ -61,7 +61,7 @@ jobs:
         uses: actions/setup-python@v2.2.2
 
       - name: Install gcc
-        run: sudo apt install build-essential -y
+        run: sudo apt-get install build-essential -y
 
       - name: Install PlatformIO Core
         run: |
