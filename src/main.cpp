@@ -28,6 +28,7 @@ Ventilation ventilation = Ventilation();
 void setup()
 {
     powerArduino.setState(true);
+    enclosurePower.setOn();
 }
 
 //cppcheck-suppress unusedFunction
@@ -42,7 +43,7 @@ void loop()
     ventilation.tick(millis(), externalVentilationSwitch.isOn(), printerInput.isOn());
 
     // Write
-    powerArduino.setState(true);
+    powerArduino.setState(enclosurePower.isPowerActive());
     powerLight.setState(ledLighting.isOn());
     powerEnclosure.setState(enclosurePower.isPowerActive());
     powerEnclosureVentilation.setState(ventilation.isEnclosureVentilationOn());
