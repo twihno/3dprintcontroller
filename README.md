@@ -12,4 +12,12 @@
 
 - **[Official Website](https://github.com/twihno/3Dprintcontroller)**
 - **[Documentation](https://github.com/twihno/3Dprintcontroller/wiki)**
-- ![Features](https://github.com/twihno/3dprintcontroller/wiki/Featurelist)
+- [Features](https://github.com/twihno/3dprintcontroller/wiki/Featurelist)
+
+---
+
+<div align="center">
+
+[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/twihno/3dprintcontroller)
+
+</div>
