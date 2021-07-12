@@ -2,6 +2,8 @@
 #include <unity.h>
 
 #include "Relay.hpp"
+#include "Ventilation.hpp"
+#include "Constants.hpp"
 
 void test_relay(void)
 {
@@ -45,18 +47,90 @@ void test_all_relays(void)
     for (int i = 0; i < 7; i++)
     {
         // Test if Relay is off
-        TEST_ASSERT_FALSE(digitalRead((i * 2) + 23));
+        //TEST_ASSERT_EQUAL(digitalRead((i * 2) + 23), LOW);
 
         // Test turn on relay
         r[i].on();
-        TEST_ASSERT_TRUE(digitalRead((i * 2) + 23));
+        //TEST_ASSERT_EQUAL(digitalRead((i * 2) + 23), HIGH);
 
-        delay(2000);
+        delay(500);
 
         r[i].off();
-        TEST_ASSERT_FALSE(digitalRead((i * 2) + 23));
+        //TEST_ASSERT_EQUAL(digitalRead((i * 2) + 23), LOW);
 
-        delay(2000);
+        delay(100);
+    }
+}
+
+void test_ventilation(void)
+{
+    Ventilation ventilation = Ventilation();
+
+    Relay powerEnclosureVentilation = Relay(33, LOW);
+    Relay powerExternalVentilation = Relay(35, LOW);
+
+    bool printerOn = false;
+    bool switchOn = false;
+
+    //Tes initial state
+    TEST_ASSERT_FALSE(powerEnclosureVentilation.isOn());
+    TEST_ASSERT_FALSE(powerExternalVentilation.isOn());
+
+    //Test initial state
+    ventilation.tick(0, switchOn, printerOn);
+
+    powerEnclosureVentilation.setState(ventilation.isEnclosureVentilationOn());
+    powerExternalVentilation.setState(ventilation.isExternalVentilationReq());
+
+    TEST_ASSERT_FALSE(powerEnclosureVentilation.isOn());
+    TEST_ASSERT_FALSE(powerExternalVentilation.isOn());
+
+    //Test printer on
+    printerOn = true;
+
+    ventilation.tick(1, switchOn, printerOn);
+
+    powerEnclosureVentilation.setState(ventilation.isEnclosureVentilationOn());
+    powerExternalVentilation.setState(ventilation.isExternalVentilationReq());
+
+    TEST_ASSERT_TRUE(powerEnclosureVentilation.isOn());
+    TEST_ASSERT_TRUE(powerExternalVentilation.isOn());
+
+    //Test voodoo oszillatio
+
+    for (int i = 0; i < 20; i++)
+    {
+
+        ventilation.tick(2 + i, switchOn, printerOn);
+
+        powerEnclosureVentilation.setState(ventilation.isEnclosureVentilationOn());
+        powerExternalVentilation.setState(ventilation.isExternalVentilationReq());
+
+        delay(100);
+    }
+
+    //Test external ventilation on
+    switchOn = true;
+
+    ventilation.tick(100, switchOn, printerOn);
+
+    powerEnclosureVentilation.setState(ventilation.isEnclosureVentilationOn());
+    powerExternalVentilation.setState(ventilation.isExternalVentilationReq());
+
+    TEST_ASSERT_TRUE(powerEnclosureVentilation.isOn());
+    TEST_ASSERT_FALSE(powerExternalVentilation.isOn());
+
+    //Test voodoo oszillatio
+
+    for (int i = 0; i < 20; i++)
+    {
+
+        ventilation.tick(101 + i, switchOn, printerOn);
+
+        powerEnclosureVentilation.setState(ventilation.isEnclosureVentilationOn());
+        powerExternalVentilation.setState(ventilation.isExternalVentilationReq());
+
+        delay(100);
     }
 }
 
@@ -70,6 +144,8 @@ void setup()
 
     UNITY_BEGIN();
     RUN_TEST(test_relay);
+    RUN_TEST(test_all_relays);
+    RUN_TEST(test_ventilation);
     UNITY_END();
 }
 

@@ -76,11 +76,11 @@ void test_cachedpullupinput(void)
 {
     When(Method(ArduinoFake(), pinMode)).AlwaysReturn();
     When(Method(ArduinoFake(), digitalWrite)).AlwaysReturn();
-    When(Method(ArduinoFake(), digitalRead)).Return(1, 0, 1, 0);
+    When(Method(ArduinoFake(), digitalRead)).Return(1, 0, 1, 0, 1, 1, 1, 0, 0, 0);
 
     CachedPullupInput cpullinput = CachedPullupInput(13);
 
-    // Test input
+    // Test all input methods
     cpullinput.read();
     TEST_ASSERT_FALSE(cpullinput.isOn());
 
@@ -95,6 +95,16 @@ void test_cachedpullupinput(void)
 
     // Test persistence
     TEST_ASSERT_FALSE(cpullinput.isOff());
+
+    cpullinput.read();
+    TEST_ASSERT_TRUE(cpullinput.isOff());
+    cpullinput.read();
+    TEST_ASSERT_TRUE(cpullinput.isOff());
+    cpullinput.read();
+    TEST_ASSERT_TRUE(cpullinput.isOff());
+
+    cpullinput.read();
+    TEST_ASSERT_TRUE(cpullinput.isON());
 }
 
 void test_printerinput(void)
@@ -133,7 +143,7 @@ void test_printerinput(void)
 
     printerInput.read(PRINTER_OFF_TOLERANCE);
     TEST_ASSERT_TRUE(printerInput.isOn());
-    
+
     printerInput.read(PRINTER_OFF_TOLERANCE + 1);
     TEST_ASSERT_TRUE(printerInput.isOn());
 
@@ -519,10 +529,10 @@ void test_ventilation(void)
 void test_ledlighting(void)
 {
     LEDLighting ledLighting;
-    
+
     // Initially ledLighting is required to be off
     TEST_ASSERT_FALSE(ledLighting.isOn());
-    
+
     // Test if we can turn on ledLighting
     ledLighting.setOn(0);
     TEST_ASSERT_TRUE(ledLighting.isOn());
@@ -530,7 +540,7 @@ void test_ledlighting(void)
     // Test if we can turn off ledLighting
     ledLighting.setOff();
     TEST_ASSERT_FALSE(ledLighting.isOn());
-    
+
     // Test if ledLighting turns off after timeout has been reached
     ledLighting.setOn(0);
     ledLighting.tick(LEDLIGHTING_TIMEOUT - 1);
