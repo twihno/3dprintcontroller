@@ -38,6 +38,8 @@ void loop()
     printerInput.read(millis());
     externalVentilationSwitch.read();
 
+    // Process
+
     enclosurePower.tick(millis(), printerInput.isOn());
     ledLighting.tick(millis());
     ventilation.tick(millis(), externalVentilationSwitch.isOn(), printerInput.isOn());
