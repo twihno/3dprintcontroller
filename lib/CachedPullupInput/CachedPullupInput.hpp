@@ -7,10 +7,10 @@
 class CachedPullupInput : public PullupInput
 {
 private:
-    bool state;
+    bool state = false;
 
 public:
-    explicit CachedPullupInput(uint8_t input_pin);
+    explicit CachedPullupInput(uint8_t input_pin) : PullupInput(input_pin){};
     void read(void);
     bool isOn(void) override;
     bool isOff(void) override;
