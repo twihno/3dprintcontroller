@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+#include "Constants.hpp"
 #include "PullupInput.hpp"
 #include "Relay.hpp"
 #include "EnclosurePower.hpp"
@@ -9,15 +10,15 @@
 #include "CachedPullupInput.hpp"
 
 // Input
-PrinterInput printerInput = PrinterInput(22);
-CachedPullupInput externalVentilationSwitch = CachedPullupInput(24);
+PrinterInput printerInput;
+CachedPullupInput externalVentilationSwitch;
 
 // Output
-Relay powerArduino = Relay(37, LOW);
-Relay powerLight = Relay(29, LOW);
-Relay powerEnclosure = Relay(31, LOW);
-Relay powerEnclosureVentilation = Relay(33, LOW);
-Relay powerExternalVentilation = Relay(35, LOW);
+Relay powerArduino;
+Relay powerLight;
+Relay powerEnclosure;
+Relay powerEnclosureVentilation;
+Relay powerExternalVentilation;
 
 // Control
 EnclosurePower enclosurePower = EnclosurePower();
@@ -27,6 +28,25 @@ Ventilation ventilation = Ventilation();
 //cppcheck-suppress unusedFunction
 void setup()
 {
+    // Set pin modes
+    // INPUT
+    pinMode(PRINTER_INPUT_PIN, INPUT_PULLUP);
+    printerInput.init(PRINTER_INPUT_PIN);
+    pinMode(EXTERNAL_VENTILATION_SWITCH_PIN, INPUT_PULLUP);
+    externalVentilationSwitch.init(EXTERNAL_VENTILATION_SWITCH_PIN);
+
+    // OUTPUT
+    pinMode(PWR_ARDUINO_PIN, OUTPUT);
+    powerArduino.init(PWR_ARDUINO_PIN, HIGH);
+    pinMode(PWR_LIGHT_PIN, OUTPUT);
+    powerLight.init(PWR_LIGHT_PIN, HIGH);
+    pinMode(PWR_ENCLOSURE_PIN, OUTPUT);
+    powerEnclosure.init(PWR_ENCLOSURE_PIN, HIGH);
+    pinMode(PWR_ENCLOSURE_VENT_PIN, OUTPUT);
+    powerEnclosureVentilation.init(PWR_ENCLOSURE_VENT_PIN, HIGH);
+    pinMode(PWR_EXTERNAL_VENT_PIN, OUTPUT);
+    powerExternalVentilation.init(PWR_EXTERNAL_VENT_PIN, HIGH);
+
     powerArduino.setState(true);
     enclosurePower.setOn();
 }

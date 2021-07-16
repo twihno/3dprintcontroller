@@ -19,7 +19,7 @@ private:
     uint32_t timestamp = 0;
 
 public:
-    explicit PrinterInput(uint8_t input_pin) : PullupInput(input_pin){};
+    PrinterInput(void) = default;
     void read(uint32_t millis);
     bool isOn() override;
     bool isOff() override;
