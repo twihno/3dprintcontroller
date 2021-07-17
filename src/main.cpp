@@ -37,15 +37,15 @@ void setup()
 
     // OUTPUT
     pinMode(PWR_ARDUINO_PIN, OUTPUT);
-    powerArduino.init(PWR_ARDUINO_PIN, HIGH);
+    powerArduino.init(PWR_ARDUINO_PIN, LOW);
     pinMode(PWR_LIGHT_PIN, OUTPUT);
-    powerLight.init(PWR_LIGHT_PIN, HIGH);
+    powerLight.init(PWR_LIGHT_PIN, LOW);
     pinMode(PWR_ENCLOSURE_PIN, OUTPUT);
-    powerEnclosure.init(PWR_ENCLOSURE_PIN, HIGH);
+    powerEnclosure.init(PWR_ENCLOSURE_PIN, LOW);
     pinMode(PWR_ENCLOSURE_VENT_PIN, OUTPUT);
-    powerEnclosureVentilation.init(PWR_ENCLOSURE_VENT_PIN, HIGH);
+    powerEnclosureVentilation.init(PWR_ENCLOSURE_VENT_PIN, LOW);
     pinMode(PWR_EXTERNAL_VENT_PIN, OUTPUT);
-    powerExternalVentilation.init(PWR_EXTERNAL_VENT_PIN, HIGH);
+    powerExternalVentilation.init(PWR_EXTERNAL_VENT_PIN, LOW);
 
     powerArduino.setState(true);
     enclosurePower.setOn();
