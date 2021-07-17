@@ -34,7 +34,8 @@ void test_relay(void)
     When(Method(ArduinoFake(), digitalWrite)).AlwaysReturn();
     When(Method(ArduinoFake(), digitalRead)).AlwaysReturn(1);
 
-    Relay r = Relay(13, LOW);
+    Relay r;
+    r.init(13, LOW);
 
     // Initially a relay is required to be off
     TEST_ASSERT_FALSE(r.isOn());
@@ -63,7 +64,8 @@ void test_pullupinput(void)
     When(Method(ArduinoFake(), digitalWrite)).AlwaysReturn();
     When(Method(ArduinoFake(), digitalRead)).Return(1, 0, 1, 0);
 
-    PullupInput pullinput = PullupInput(13);
+    PullupInput pullinput;
+    pullinput.init(13);
 
     TEST_ASSERT_FALSE(pullinput.isOn());
     TEST_ASSERT_TRUE(pullinput.isOn());
@@ -78,7 +80,8 @@ void test_cachedpullupinput(void)
     When(Method(ArduinoFake(), digitalWrite)).AlwaysReturn();
     When(Method(ArduinoFake(), digitalRead)).Return(1, 0, 1, 0, 1, 1, 1, 0, 0, 0);
 
-    CachedPullupInput cpullinput = CachedPullupInput(13);
+    CachedPullupInput cpullinput;
+    cpullinput.init(13);
 
     // Test all input methods
     cpullinput.read();
@@ -104,7 +107,7 @@ void test_cachedpullupinput(void)
     TEST_ASSERT_TRUE(cpullinput.isOff());
 
     cpullinput.read();
-    TEST_ASSERT_TRUE(cpullinput.isON());
+    TEST_ASSERT_TRUE(cpullinput.isOn());
 }
 
 void test_printerinput(void)
@@ -113,7 +116,8 @@ void test_printerinput(void)
     When(Method(ArduinoFake(), digitalWrite)).AlwaysReturn();
     When(Method(ArduinoFake(), digitalRead)).Return(0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1);
 
-    PrinterInput printerInput = PrinterInput(13);
+    PrinterInput printerInput;
+    printerInput.init(13);
 
     TEST_ASSERT_FALSE(printerInput.isOn());
 
@@ -431,7 +435,7 @@ void test_enclosurepower_copycat(void)
 
 void test_ventilation(void)
 {
-    Ventilation ventilation = Ventilation();
+    Ventilation ventilation;
 
     // Test initial state
     TEST_ASSERT_FALSE(ventilation.isEnclosureVentilationOn());
