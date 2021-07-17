@@ -1,10 +1,7 @@
 #include "PullupInput.hpp"
 
-PullupInput::PullupInput(void) = default;
-
-PullupInput::PullupInput(uint8_t input_pin)
+void PullupInput::init(uint8_t input_pin)
 {
-    pinMode(pin, INPUT_PULLUP);
     pin = input_pin;
 }
 

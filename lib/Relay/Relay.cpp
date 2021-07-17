@@ -1,18 +1,12 @@
 #include "Relay.hpp"
 
-Relay::Relay(uint8_t relay_pin, bool mode)
+void Relay::init(uint8_t relay_pin, bool mode)
 {
     pin = relay_pin;
 
     this->ON = mode;
     this->OFF = !mode;
 
-    pinMode(pin, OUTPUT);
-    init();
-}
-
-void Relay::init()
-{
     this->state = 0;
     digitalWrite(this->pin, OFF);
 }

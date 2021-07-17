@@ -10,6 +10,7 @@
 #include "EnclosurePower.hpp"
 #include "Ventilation.hpp"
 #include "PrinterInput.hpp"
+#include "CachedPullupInput.hpp"
 
 using namespace fakeit;
 
@@ -33,7 +34,8 @@ void test_relay(void)
     When(Method(ArduinoFake(), digitalWrite)).AlwaysReturn();
     When(Method(ArduinoFake(), digitalRead)).AlwaysReturn(1);
 
-    Relay r = Relay(13, LOW);
+    Relay r;
+    r.init(13, LOW);
 
     // Initially a relay is required to be off
     TEST_ASSERT_FALSE(r.isOn());
@@ -62,7 +64,8 @@ void test_pullupinput(void)
     When(Method(ArduinoFake(), digitalWrite)).AlwaysReturn();
     When(Method(ArduinoFake(), digitalRead)).Return(1, 0, 1, 0);
 
-    PullupInput pullinput = PullupInput(13);
+    PullupInput pullinput;
+    pullinput.init(13);
 
     TEST_ASSERT_FALSE(pullinput.isOn());
     TEST_ASSERT_TRUE(pullinput.isOn());
@@ -71,13 +74,50 @@ void test_pullupinput(void)
     TEST_ASSERT_FALSE(pullinput.isOff());
 }
 
+void test_cachedpullupinput(void)
+{
+    When(Method(ArduinoFake(), pinMode)).AlwaysReturn();
+    When(Method(ArduinoFake(), digitalWrite)).AlwaysReturn();
+    When(Method(ArduinoFake(), digitalRead)).Return(1, 0, 1, 0, 1, 1, 1, 0, 0, 0);
+
+    CachedPullupInput cpullinput;
+    cpullinput.init(13);
+
+    // Test all input methods
+    cpullinput.read();
+    TEST_ASSERT_FALSE(cpullinput.isOn());
+
+    cpullinput.read();
+    TEST_ASSERT_TRUE(cpullinput.isOn());
+
+    cpullinput.read();
+    TEST_ASSERT_TRUE(cpullinput.isOff());
+
+    cpullinput.read();
+    TEST_ASSERT_FALSE(cpullinput.isOff());
+
+    // Test persistence
+    TEST_ASSERT_FALSE(cpullinput.isOff());
+
+    cpullinput.read();
+    TEST_ASSERT_TRUE(cpullinput.isOff());
+    cpullinput.read();
+    TEST_ASSERT_TRUE(cpullinput.isOff());
+    cpullinput.read();
+    TEST_ASSERT_TRUE(cpullinput.isOff());
+
+    cpullinput.read();
+    TEST_ASSERT_TRUE(cpullinput.isOn());
+}
+
 void test_printerinput(void)
 {
     When(Method(ArduinoFake(), pinMode)).AlwaysReturn();
     When(Method(ArduinoFake(), digitalWrite)).AlwaysReturn();
     When(Method(ArduinoFake(), digitalRead)).Return(0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1);
 
-    PrinterInput printerInput = PrinterInput(13);
+    PrinterInput printerInput;
+    printerInput.init(13);
 
     TEST_ASSERT_FALSE(printerInput.isOn());
 
@@ -107,7 +147,7 @@ void test_printerinput(void)
 
     printerInput.read(PRINTER_OFF_TOLERANCE);
     TEST_ASSERT_TRUE(printerInput.isOn());
-    
+
     printerInput.read(PRINTER_OFF_TOLERANCE + 1);
     TEST_ASSERT_TRUE(printerInput.isOn());
 
@@ -395,7 +435,7 @@ void test_enclosurepower_copycat(void)
 
 void test_ventilation(void)
 {
-    Ventilation ventilation = Ventilation();
+    Ventilation ventilation;
 
     // Test initial state
     TEST_ASSERT_FALSE(ventilation.isEnclosureVentilationOn());
@@ -493,10 +533,10 @@ void test_ventilation(void)
 void test_ledlighting(void)
 {
     LEDLighting ledLighting;
-    
+
     // Initially ledLighting is required to be off
     TEST_ASSERT_FALSE(ledLighting.isOn());
-    
+
     // Test if we can turn on ledLighting
     ledLighting.setOn(0);
     TEST_ASSERT_TRUE(ledLighting.isOn());
@@ -504,7 +544,7 @@ void test_ledlighting(void)
     // Test if we can turn off ledLighting
     ledLighting.setOff();
     TEST_ASSERT_FALSE(ledLighting.isOn());
-    
+
     // Test if ledLighting turns off after timeout has been reached
     ledLighting.setOn(0);
     ledLighting.tick(LEDLIGHTING_TIMEOUT - 1);
@@ -522,6 +562,7 @@ int main(int argc, char **argv)
     RUN_TEST(test_setup);
     RUN_TEST(test_relay);
     RUN_TEST(test_pullupinput);
+    RUN_TEST(test_cachedpullupinput);
     RUN_TEST(test_printerinput);
     RUN_TEST(test_enclosurepower_auto_off);
     RUN_TEST(test_enclosurepower_copycat);

@@ -1,0 +1,20 @@
+{
+    "name": "EnclosurePower",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Adrian Reuter",
+            "email": "reutera@in.tum.de"
+        },
+        {
+            "name": "Thomas Schuster",
+            "email": "twihno@gmail.com",
+            "maintainer": true
+        }
+    ],
+    "license": "MIT",
+    "platforms": [
+        "atmelavr",
+        "native"
+    ]
+}
