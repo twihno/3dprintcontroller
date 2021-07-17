@@ -20,4 +20,7 @@ const uint8_t scroll_bar[5][8] = {
     {B10001, B10001, B10001, B10001, B10001, B10001, B11111, B11111}  // scrollbar bottom
 };
 
+void display_setup();
+void display_loop();
+
 #endif

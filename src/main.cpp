@@ -8,6 +8,7 @@
 #include "Ventilation.hpp"
 #include "PrinterInput.hpp"
 #include "CachedPullupInput.hpp"
+#include "Display.hpp"
 
 // Input
 PrinterInput printerInput;
@@ -49,6 +50,8 @@ void setup()
 
     powerArduino.setState(true);
     enclosurePower.setOn();
+
+    display_setup();
 }
 
 //cppcheck-suppress unusedFunction
@@ -63,6 +66,8 @@ void loop()
     enclosurePower.tick(millis(), printerInput.isOn());
     ledLighting.tick(millis());
     ventilation.tick(millis(), externalVentilationSwitch.isOn(), printerInput.isOn());
+
+    display_loop();
 
     // Write
     powerArduino.setState(enclosurePower.isPowerActive());

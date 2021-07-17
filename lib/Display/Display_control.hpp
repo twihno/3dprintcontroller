@@ -5,9 +5,9 @@
 #include <Encoder.h>
 #include <LCDMenuLib2.h>
 
-#define encoder_A_pin 20      // physical pin has to be 2 or 3 to use interrupts (on mega e.g. 20 or 21), use internal pullups
-#define encoder_B_pin 21      // physical pin has to be 2 or 3 to use interrupts (on mega e.g. 20 or 21), use internal pullups
-#define encoder_button_pin 49 // physical pin , use internal pullup
+#define encoder_A_pin 2      // physical pin has to be 2 or 3 to use interrupts (on mega e.g. 20 or 21), use internal pullups
+#define encoder_B_pin 3      // physical pin has to be 2 or 3 to use interrupts (on mega e.g. 20 or 21), use internal pullups
+#define encoder_button_pin 5 // physical pin , use internal pullup
 
 #define g_LCDML_CONTROL_button_long_press 800  // ms
 #define g_LCDML_CONTROL_button_short_press 120 // ms
