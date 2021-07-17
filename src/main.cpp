@@ -9,6 +9,14 @@
 #include "PrinterInput.hpp"
 #include "CachedPullupInput.hpp"
 
+#define INIT_PULLUPINPUT(INPUT, PIN)\
+    pinMode(PIN, INPUT_PULLUP);\
+    INPUT.init(PIN);
+
+#define INIT_LOW_RELAIS(RELAIS, PIN)\
+    pinMode(PIN, OUTPUT);\
+    RELAIS.init(PIN, LOW);
+
 // Input
 PrinterInput printerInput;
 CachedPullupInput externalVentilationSwitch;
@@ -29,23 +37,17 @@ Ventilation ventilation = Ventilation();
 void setup()
 {
     // Set pin modes
+    
     // INPUT
-    pinMode(PRINTER_INPUT_PIN, INPUT_PULLUP);
-    printerInput.init(PRINTER_INPUT_PIN);
-    pinMode(EXTERNAL_VENTILATION_SWITCH_PIN, INPUT_PULLUP);
-    externalVentilationSwitch.init(EXTERNAL_VENTILATION_SWITCH_PIN);
+    INIT_PULLUPINPUT(printerInput, PRINTER_INPUT_PIN)
+    INIT_PULLUPINPUT(externalVentilationSwitch, EXTERNAL_VENTILATION_SWITCH_PIN)
 
-    // OUTPUT
-    pinMode(PWR_ARDUINO_PIN, OUTPUT);
-    powerArduino.init(PWR_ARDUINO_PIN, LOW);
-    pinMode(PWR_LIGHT_PIN, OUTPUT);
-    powerLight.init(PWR_LIGHT_PIN, LOW);
-    pinMode(PWR_ENCLOSURE_PIN, OUTPUT);
-    powerEnclosure.init(PWR_ENCLOSURE_PIN, LOW);
-    pinMode(PWR_ENCLOSURE_VENT_PIN, OUTPUT);
-    powerEnclosureVentilation.init(PWR_ENCLOSURE_VENT_PIN, LOW);
-    pinMode(PWR_EXTERNAL_VENT_PIN, OUTPUT);
-    powerExternalVentilation.init(PWR_EXTERNAL_VENT_PIN, LOW);
+    // OUTPUT    
+    INIT_LOW_RELAIS(powerArduino, PWR_ARDUINO_PIN)
+    INIT_LOW_RELAIS(powerLight, PWR_LIGHT_PIN)
+    INIT_LOW_RELAIS(powerEnclosure, PWR_ENCLOSURE_PIN)
+    INIT_LOW_RELAIS(powerEnclosureVentilation, PWR_ENCLOSURE_VENT_PIN)
+    INIT_LOW_RELAIS(powerExternalVentilation, PWR_EXTERNAL_VENT_PIN)
 
     powerArduino.setState(true);
     enclosurePower.setOn();
@@ -59,7 +61,6 @@ void loop()
     externalVentilationSwitch.read();
 
     // Process
-
     enclosurePower.tick(millis(), printerInput.isOn());
     ledLighting.tick(millis());
     ventilation.tick(millis(), externalVentilationSwitch.isOn(), printerInput.isOn());
