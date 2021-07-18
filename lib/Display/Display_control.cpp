@@ -33,6 +33,7 @@ void lcdml_menu_control(void)
         {
             // button is pressed
             LCDML.BT_left();
+            lcd.turnOnBacklight(millis());
 
             // reset button press time for next detection
             g_LCDML_CONTROL_button_prev = HIGH;
@@ -40,6 +41,7 @@ void lcdml_menu_control(void)
         else
         {
             LCDML.BT_down();
+            lcd.turnOnBacklight(millis());
         }
 
         // init encoder for the next step
@@ -55,6 +57,7 @@ void lcdml_menu_control(void)
         {
             // button is pressed
             LCDML.BT_right();
+            lcd.turnOnBacklight(millis());
 
             // reset button press time for next detection
             g_LCDML_CONTROL_button_prev = HIGH;
@@ -62,6 +65,7 @@ void lcdml_menu_control(void)
         else
         {
             LCDML.BT_up();
+            lcd.turnOnBacklight(millis());
         }
 
         // init encoder for the next step
@@ -90,12 +94,14 @@ void lcdml_menu_control(void)
             {
                 // long press detected
                 LCDML.BT_quit();
+                lcd.turnOnBacklight(millis());
             }
             // check short press situation
             else if ((millis() - g_LCDML_CONTROL_button_press_time) >= g_LCDML_CONTROL_button_short_press)
             {
                 // short press detected
                 LCDML.BT_enter();
+                lcd.turnOnBacklight(millis());
             }
         }
 

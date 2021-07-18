@@ -5,7 +5,8 @@
 
 enum class LEDLightingState
 {
-    ON, OFF
+    ON,
+    OFF
 };
 
 class LEDLighting
@@ -20,6 +21,7 @@ public:
     void setOn(uint32_t millis);
     void setOff();
     bool isOn();
+    uint32_t getTimestamp();
 };
 
 #endif

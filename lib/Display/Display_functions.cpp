@@ -11,194 +11,125 @@
 void your_function_name(uint8_t param)
 // *********************************************************************
 {
-  if(LCDML.FUNC_setup())          // ****** SETUP *********
-  {
-    // remmove compiler warnings when the param variable is not used:
-    //LCDML_UNUSED(param);
-    // setup
-    // is called only if it is started
-    // starts a trigger event for the loop function every 100 milliseconds
-    LCDML.FUNC_setLoopInterval(100);
-    // uncomment this line when the menu should go back to the last called position
-    // this could be a cursor position or the an active menu function
-    // GBA means => go back advanced
-    //LCDML.FUNC_setGBA() 
-    //
-  }
-  if(LCDML.FUNC_loop())           // ****** LOOP *********
-  {
-    // loop
-    // is called when it is triggered
-    // - with LCDML_DISP_triggerMenu( milliseconds )
-    // - with every button or event status change
-    // uncomment this line when the screensaver should not be called when this function is running
-    // reset screensaver timer
-    //LCDML.SCREEN_resetTimer();
-    // check if any button is pressed (enter, up, down, left, right)
-    if(LCDML.BT_checkAny()) {
-      LCDML.FUNC_goBackToMenu();
+    if(LCDML.FUNC_setup())          // ****** SETUP *********
+    {
+        // remmove compiler warnings when the param variable is not used:
+        //LCDML_UNUSED(param);
+        // setup
+        // is called only if it is started
+        // starts a trigger event for the loop function every 100 milliseconds
+        LCDML.FUNC_setLoopInterval(100);
+        // uncomment this line when the menu should go back to the last called position
+        // this could be a cursor position or the an active menu function
+        // GBA means => go back advanced
+        //LCDML.FUNC_setGBA() 
+        //
     }
-  }
-  if(LCDML.FUNC_close())      // ****** STABLE END *********
-  {
-    // loop end
-    // you can here reset some global vars or delete it
-    // this function is always called when the functions ends.
-    // this means when you are calling a jumpTo ore a goRoot function
-    // that this part is called before a function is closed
-  }
+    if(LCDML.FUNC_loop())           // ****** LOOP *********
+    {
+        // loop
+        // is called when it is triggered
+        // - with LCDML_DISP_triggerMenu( milliseconds )
+        // - with every button or event status change
+        // uncomment this line when the screensaver should not be called when this function is running
+        // reset screensaver timer
+        //LCDML.SCREEN_resetTimer();
+        // check if any button is pressed (enter, up, down, left, right)
+        if(LCDML.BT_checkAny()) {
+            LCDML.FUNC_goBackToMenu();
+        }
+    }
+    if(LCDML.FUNC_close())      // ****** STABLE END *********
+    {
+        // loop end
+        // you can here reset some global vars or delete it
+        // this function is always called when the functions ends.
+        // this means when you are calling a jumpTo ore a goRoot function
+        // that this part is called before a function is closed
+    }
 }
  * ===================================================================== *
  */
 
-// *********************************************************************
-void mFunc_information(uint8_t param)
-// *********************************************************************
+bool menu_item_turn_off_visible = false;
+void updateMenuLoop(void)
 {
-    if (LCDML.FUNC_setup()) // ****** SETUP *********
+    // remove turn off from menu
+    if (!ledLighting.isOn() && menu_item_turn_off_visible)
     {
-        // remmove compiler warnings when the param variable is not used:
-        LCDML_UNUSED(param);
+        menu_item_turn_off_visible = false;
 
-        // setup function
+        LCDML.MENU_allCondetionRefresh();
+        LCDML.DISP_update();
+    }
+}
+
+void printTemp(void)
+{
+    lcd.setCursor(2, 0);
+    lcd.print("--.-/--\337C");
+}
+
+uint32_t remaining_time = 0;
+char tmp_time_string[10];
+uint32_t last_light_timer_update = 0;
+bool screensaver_timer_light_off = false;
+void printLight(void)
+{
+    last_light_timer_update = millis();
+    lcd.setCursor(15, 0);
+
+    if (!ledLighting.isOn())
+    {
+        screensaver_timer_light_off = true;
+        lcd.print("aus  ");
+    }
+    else
+    {
+        remaining_time = ledLighting.getTimestamp();
+
+        screensaver_timer_light_off = false;
+        remaining_time -= millis();
+
+        snprintf(tmp_time_string, 3, "%02d", (int16_t)(remaining_time / 60000));
+        lcd.print(tmp_time_string);
+
+        lcd.print(":");
+
+        snprintf(tmp_time_string, 3, "%02d", (int16_t)((remaining_time / 1000) % 60));
+        lcd.print(tmp_time_string);
+    }
+}
+
+void printScreensaver(bool redraw)
+{
+    if (redraw)
+    {
+        // temperature
         lcd.setCursor(0, 0);
-        lcd.print(F("To close this"));
-        lcd.setCursor(0, 1);
-        lcd.print(F("function press"));
-        lcd.setCursor(0, 2);
-        lcd.print(F("any button or use"));
-        lcd.setCursor(0, 3);
-        lcd.print(F("back button"));
-    }
+        lcd.write(byte(0x05));
+        printTemp();
 
-    if (LCDML.FUNC_loop()) // ****** LOOP *********
+        // light
+        lcd.setCursor(13, 0);
+        lcd.write(byte(0x06));
+        printLight();
+    }
+    else
     {
-        // loop function, can be run in a loop when LCDML_DISP_triggerMenu(xx) is set
-        // the quit button works in every DISP function without any checks; it starts the loop_end function
-        if (LCDML.BT_checkAny())
-        { // check if any button is pressed (enter, up, down, left, right)
-            // LCDML_goToMenu stops a running menu function and goes to the menu
-            LCDML.FUNC_goBackToMenu();
+        // update light
+        if (ledLighting.getTimestamp() > millis() && millis() >= (last_light_timer_update + 1000))
+        {
+            printLight();
         }
-    }
-
-    if (LCDML.FUNC_close()) // ****** STABLE END *********
-    {
-        // you can here reset some global vars or do nothing
+        else if (!screensaver_timer_light_off)
+        {
+            printLight();
+        }
     }
 }
 
-// *********************************************************************
-uint8_t g_func_timer_info = 0; // time counter (global variable)
-unsigned long g_timer_1 = 0;   // timer variable (global variable)
-void mFunc_timer_info(uint8_t param)
-// *********************************************************************
-{
-    if (LCDML.FUNC_setup()) // ****** SETUP *********
-    {
-        // remmove compiler warnings when the param variable is not used:
-        LCDML_UNUSED(param);
-
-        lcd.print(F("20 sec wait"));     // print some content on first row
-        g_func_timer_info = 20;          // reset and set timer
-        LCDML.FUNC_setLoopInterval(100); // starts a trigger event for the loop function every 100 milliseconds
-
-        LCDML.TIMER_msReset(g_timer_1);
-    }
-
-    if (LCDML.FUNC_loop()) // ****** LOOP *********
-    {
-        // loop function, can be run in a loop when LCDML_DISP_triggerMenu(xx) is set
-        // the quit button works in every DISP function without any checks; it starts the loop_end function
-
-        // reset screensaver timer
-        LCDML.SCREEN_resetTimer();
-
-        // this function is called every 100 milliseconds
-
-        // this method checks every 1000 milliseconds if it is called
-        if (LCDML.TIMER_ms(g_timer_1, 1000))
-        {
-            g_func_timer_info--; // increment the value every second
-            lcd.setCursor(0, 0); // set cursor pos
-            lcd.print(F("  "));
-            lcd.setCursor(0, 0);          // set cursor pos
-            lcd.print(g_func_timer_info); // print the time counter value
-        }
-
-        // this function can only be ended when quit button is pressed or the time is over
-        // check if the function ends normally
-        if (g_func_timer_info <= 0)
-        {
-            // leave this function
-            LCDML.FUNC_goBackToMenu();
-        }
-    }
-
-    if (LCDML.FUNC_close()) // ****** STABLE END *********
-    {
-        // you can here reset some global vars or do nothing
-    }
-}
-
-// *********************************************************************
-uint8_t g_button_value = 0; // button value counter (global variable)
-void mFunc_p2(uint8_t param)
-// *********************************************************************
-{
-    if (LCDML.FUNC_setup()) // ****** SETUP *********
-    {
-        // remmove compiler warnings when the param variable is not used:
-        LCDML_UNUSED(param);
-
-        // setup function
-        // print LCD content
-        // print LCD content
-        lcd.setCursor(0, 0);
-        lcd.print(F("press left or up"));
-        lcd.setCursor(0, 1);
-        lcd.print(F("count: 0 of 3"));
-        // Reset Button Value
-        g_button_value = 0;
-
-        // Disable the screensaver for this function until it is closed
-        LCDML.FUNC_disableScreensaver();
-    }
-
-    if (LCDML.FUNC_loop()) // ****** LOOP *********
-    {
-        // the quit button works in every DISP function without any checks; it starts the loop_end function
-        if (LCDML.BT_checkAny()) // check if any button is pressed (enter, up, down, left, right)
-        {
-            if (LCDML.BT_checkLeft() || LCDML.BT_checkUp()) // check if button left is pressed
-            {
-                LCDML.BT_resetLeft(); // reset the left button
-                LCDML.BT_resetUp();   // reset the left button
-                g_button_value++;
-
-                // update LCD content
-                // update LCD content
-                lcd.setCursor(7, 1);       // set cursor
-                lcd.print(g_button_value); // print change content
-            }
-        }
-
-        // check if button count is three
-        if (g_button_value >= 3)
-        {
-            LCDML.FUNC_goBackToMenu(); // leave this function
-        }
-    }
-
-    if (LCDML.FUNC_close()) // ****** STABLE END *********
-    {
-        // you can here reset some global vars or do nothing
-    }
-}
-
-// *********************************************************************
 void mFunc_screensaver(uint8_t param)
-// *********************************************************************
 {
     if (LCDML.FUNC_setup()) // ****** SETUP *********
     {
@@ -206,17 +137,13 @@ void mFunc_screensaver(uint8_t param)
         LCDML_UNUSED(param);
 
         // update LCD content
-        lcd.setCursor(0, 0);         // set cursor
-        lcd.print(F("screensaver")); // print change content
-        lcd.setCursor(0, 1);         // set cursor
-        lcd.print(F("press any key"));
-        lcd.setCursor(0, 2); // set cursor
-        lcd.print(F("to leave it"));
+        printScreensaver(true);
         LCDML.FUNC_setLoopInterval(100); // starts a trigger event for the loop function every 100 milliseconds
     }
 
     if (LCDML.FUNC_loop())
     {
+        printScreensaver(false);
         if (LCDML.BT_checkAny()) // check if any button is pressed (enter, up, down, left, right)
         {
             LCDML.FUNC_goBackToMenu(); // leave this function
@@ -230,44 +157,39 @@ void mFunc_screensaver(uint8_t param)
     }
 }
 
-// *********************************************************************
-void mFunc_back(uint8_t param)
-// *********************************************************************
+void mFunc_turnOnLight(uint8_t param)
 {
     if (LCDML.FUNC_setup()) // ****** SETUP *********
     {
         // remmove compiler warnings when the param variable is not used:
         LCDML_UNUSED(param);
+        ledLighting.setOn(millis());
 
-        // end function and go an layer back
-        LCDML.FUNC_goBackToMenu(1); // leave this function and go a layer back
+        // update menu to add "Light off"
+        menu_item_turn_off_visible = true;
+        LCDML.MENU_allCondetionRefresh();
+        LCDML.DISP_update();
+
+        // leave this function
+        LCDML.FUNC_goBackToMenu();
+        LCDML.SCREEN_start();
     }
 }
 
-// *********************************************************************
-void mFunc_goToRootMenu(uint8_t param)
-// *********************************************************************
+void mFunc_turnOffLight(uint8_t param)
 {
     if (LCDML.FUNC_setup()) // ****** SETUP *********
     {
         // remmove compiler warnings when the param variable is not used:
         LCDML_UNUSED(param);
+        ledLighting.setOff();
 
-        // go to root and display menu
-        LCDML.MENU_goRoot();
-    }
-}
+        // update menu to remove "Light off"
+        LCDML.MENU_allCondetionRefresh();
+        LCDML.DISP_update();
 
-// *********************************************************************
-void mFunc_jumpTo_timer_info(uint8_t param)
-// *********************************************************************
-{
-    if (LCDML.FUNC_setup()) // ****** SETUP *********
-    {
-        // remmove compiler warnings when the param variable is not used:
-        LCDML_UNUSED(param);
-
-        // Jump to main screen
-        LCDML.OTHER_jumpToFunc(mFunc_timer_info);
+        // leave this function
+        LCDML.FUNC_goBackToMenu();
+        LCDML.SCREEN_start();
     }
 }

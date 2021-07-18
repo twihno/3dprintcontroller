@@ -13,6 +13,7 @@ void LEDLighting::tick(uint32_t millis)
     if (isOn() && (millis > timestamp))
     {
         this->state = LEDLightingState::OFF;
+        this->timestamp = 0;
     }
 }
 
@@ -30,4 +31,10 @@ void LEDLighting::setOn(uint32_t millis)
 void LEDLighting::setOff()
 {
     this->state = LEDLightingState::OFF;
+    this->timestamp = 0;
+}
+
+uint32_t LEDLighting::getTimestamp()
+{
+    return timestamp;
 }

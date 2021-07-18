@@ -3,21 +3,23 @@
 
 #include <stdint.h>
 #include <LCDMenuLib2.h>
-#include <LiquidCrystal_I2C.h>
 
+#include "Constants.hpp"
+#include "Printer_LiquidCrystal_I2C.hpp"
 #include "Display_constants.hpp"
+#include "LEDLighting.hpp"
 
-extern LiquidCrystal_I2C lcd;
+extern Printer_LiquidCrystal_I2C lcd;
 extern LCDMenuLib2 LCDML;
+extern LEDLighting ledLighting;
 
-#include "Display_functions.hpp"
+void updateMenuLoop(void);
+void printScreensaver(bool redraw);
+void printTemp(void);
+void printLight(void);
 
-void mFunc_information(uint8_t param);
-void mFunc_timer_info(uint8_t param);
-void mFunc_p2(uint8_t param);
 void mFunc_screensaver(uint8_t param);
-void mFunc_back(uint8_t param);
-void mFunc_goToRootMenu(uint8_t param);
-void mFunc_jumpTo_timer_info(uint8_t param);
+void mFunc_turnOnLight(uint8_t param);
+void mFunc_turnOffLight(uint8_t param);
 
 #endif

@@ -10,6 +10,6 @@
 
 // menu element count - last element id
 // this value must be the same as the last menu element
-#define _LCDML_DISP_cnt 17
+#define _LCDML_DISP_cnt 5
 
 #endif
