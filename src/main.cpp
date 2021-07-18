@@ -76,3 +76,8 @@ void loop()
     powerEnclosureVentilation.setState(ventilation.isEnclosureVentilationOn());
     powerExternalVentilation.setState(ventilation.isExternalVentilationReq());
 }
+
+void shutdown(void)
+{
+    enclosurePower.setOff();
+}

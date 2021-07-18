@@ -23,3 +23,8 @@ bool COND_mode_copycat()
 {
     return !enclosurePower.isAutoOff();
 }
+
+bool COND_false()
+{
+    return false;
+}

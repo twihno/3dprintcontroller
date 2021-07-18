@@ -11,5 +11,6 @@ extern EnclosurePower enclosurePower;
 bool COND_light_off();
 bool COND_mode_auto_off();
 bool COND_mode_copycat();
+bool COND_false();
 
 #endif
