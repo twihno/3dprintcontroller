@@ -91,6 +91,9 @@ jobs:
       
       - name: Install native platform
         run: pio platform install native
+      
+      - name: Install dependencies
+        run: pio lib install
         
       - name: Test project
         run: pio test -v -e native
