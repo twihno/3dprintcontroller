@@ -15,10 +15,12 @@ LCDML_addAdvanced(1, LCDML_0, 2, COND_mode_auto_off, "Modus: [Auto aus]", mFunc_
 LCDML_addAdvanced(2, LCDML_0, 3, COND_mode_copycat, "Modus: [Copycat]", mFunc_changeMode, 0, _LCDML_TYPE_default);
 LCDML_addAdvanced(3, LCDML_0, 4, COND_light_off, "Licht aus", mFunc_turnOffLight, 0, _LCDML_TYPE_default);
 LCDML_add(4, LCDML_0, 5, "Licht an", mFunc_turnOnLight);
-LCDML_add(5, LCDML_0, 6, "Ausschalten", mFunc_shutdown);
+LCDML_add(5, LCDML_0, 6, "Ausschalten", NULL);
+LCDML_add(6, LCDML_0_6, 1, "Nein", mFunc_screensaver);
+LCDML_add(7, LCDML_0_6, 2, "Ja", mFunc_shutdown);
 
 // hidden function to enable shutdown popup
-LCDML_addAdvanced(6, LCDML_0, 7, COND_false, "SHUTDOWN_POPUP", mFunc_shutdownPopup, 0, _LCDML_TYPE_default);
+LCDML_addAdvanced(8, LCDML_0, 7, COND_false, "SHUTDOWN_POPUP", mFunc_shutdownPopup, 0, _LCDML_TYPE_default);
 // ***TIP*** Try to update _LCDML_DISP_cnt when you add a menu element.
 
 // create menu
@@ -48,7 +50,7 @@ void display_setup()
     LCDML_setup(_LCDML_DISP_cnt);
 
     // Enable Menu Rollover
-    LCDML.MENU_enRollover();
+    // LCDML.MENU_enRollover();
 
     // Enable Screensaver (screensaver menu function, time to activate in ms)
     LCDML.SCREEN_enable(mFunc_screensaver, SCREENSAVER_TIMEOUT); // set to 10 seconds
