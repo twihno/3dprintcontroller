@@ -8,6 +8,7 @@
 #include "Ventilation.hpp"
 #include "PrinterInput.hpp"
 #include "CachedPullupInput.hpp"
+#include "Display.hpp"
 
 #define INIT_PULLUPINPUT(INPUT, PIN)\
     pinMode(PIN, INPUT_PULLUP);\
@@ -51,6 +52,8 @@ void setup()
 
     powerArduino.setState(true);
     enclosurePower.setOn();
+
+    display_setup();
 }
 
 //cppcheck-suppress unusedFunction
@@ -65,10 +68,18 @@ void loop()
     ledLighting.tick(millis());
     ventilation.tick(millis(), externalVentilationSwitch.isOn(), printerInput.isOn());
 
+    display_loop();
+
     // Write
     powerArduino.setState(enclosurePower.isPowerActive());
     powerLight.setState(ledLighting.isOn());
     powerEnclosure.setState(enclosurePower.isPowerActive());
     powerEnclosureVentilation.setState(ventilation.isEnclosureVentilationOn());
     powerExternalVentilation.setState(ventilation.isExternalVentilationReq());
+}
+
+//cppcheck-suppress unusedFunction
+void shutdown(void)
+{
+    enclosurePower.setOff();
 }
