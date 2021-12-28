@@ -90,7 +90,7 @@ jobs:
           sudo ln -s ~/.platformio/penv/bin/piodebuggdb /usr/local/bin/piodebuggdb 
       
       - name: Install native platform
-        run: pio platform -e native install
+        run: pio platform install native
         
       - name: Test project
         run: pio test -v -e native
