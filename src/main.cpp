@@ -26,7 +26,6 @@ EnclosurePower enclosurePower = EnclosurePower();
 LEDLighting ledLighting = LEDLighting();
 Ventilation ventilation = Ventilation();
 
-//cppcheck-suppress unusedFunction
 void setup()
 {
     // Set pin modes
@@ -54,7 +53,6 @@ void setup()
     display_setup();
 }
 
-//cppcheck-suppress unusedFunction
 void loop()
 {
     // Read
