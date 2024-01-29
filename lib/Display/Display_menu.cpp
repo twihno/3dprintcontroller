@@ -72,10 +72,10 @@ void lcdml_menu_display()
         // display rows
         for (uint8_t n = 0; n < n_max; n++)
         {
-            //set cursor
+            // set cursor
             lcd.setCursor(0, n);
 
-            //set cursor char
+            // set cursor char
             if (n == LCDML.MENU_getCursorPos())
             {
                 lcd.write(_LCDML_DISP_cfg_cursor);
@@ -106,7 +106,7 @@ void lcdml_menu_display()
         {
             if (scrollbar_max > n_max)
             {
-                //set scroll position
+                // set scroll position
                 if (scrollbar_cur_pos == scrollbar_min)
                 {
                     // min pos

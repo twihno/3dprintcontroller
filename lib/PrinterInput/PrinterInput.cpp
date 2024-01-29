@@ -5,42 +5,42 @@
 
 void PrinterInput::read(uint32_t millis)
 {
-    switch(this->state) 
+    switch (this->state)
     {
-        case PrinterState::ON:
-            if(PullupInput::isOff()) 
-            {
-                this->timestamp = millis + PRINTER_OFF_TOLERANCE;
-                this->state = PrinterState::SHUTDOWN;
-            }
-            break;
-        case PrinterState::STARTUP:
-            if(PullupInput::isOff()) 
-            {
-                this->state = PrinterState::OFF;
-            } 
-            else if(millis > timestamp) 
-            {
-                this->state = PrinterState::ON;
-            }
-            break;
-        case PrinterState::SHUTDOWN:
-            if(PullupInput::isOn()) 
-            {
-                this->state = PrinterState::ON;
-            } 
-            else if(millis > timestamp) 
-            {
-                this->state = PrinterState::OFF;
-            }
-            break;
-        case PrinterState::OFF:
-            if(PullupInput::isOn()) 
-            {
-                this->timestamp = millis + PRINTER_ON_TOLERANCE;
-                this->state = PrinterState::STARTUP;
-            }
-            break;
+    case PrinterState::ON:
+        if (PullupInput::isOff())
+        {
+            this->timestamp = millis + PRINTER_OFF_TOLERANCE;
+            this->state = PrinterState::SHUTDOWN;
+        }
+        break;
+    case PrinterState::STARTUP:
+        if (PullupInput::isOff())
+        {
+            this->state = PrinterState::OFF;
+        }
+        else if (millis > timestamp)
+        {
+            this->state = PrinterState::ON;
+        }
+        break;
+    case PrinterState::SHUTDOWN:
+        if (PullupInput::isOn())
+        {
+            this->state = PrinterState::ON;
+        }
+        else if (millis > timestamp)
+        {
+            this->state = PrinterState::OFF;
+        }
+        break;
+    case PrinterState::OFF:
+        if (PullupInput::isOn())
+        {
+            this->timestamp = millis + PRINTER_ON_TOLERANCE;
+            this->state = PrinterState::STARTUP;
+        }
+        break;
     }
 }
 

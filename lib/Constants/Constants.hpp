@@ -7,7 +7,7 @@
 #define PRINTER_INPUT_PIN 22
 #define EXTERNAL_VENTILATION_SWITCH_PIN 24
 
-//output
+// output
 #define PWR_ARDUINO_PIN 37
 #define PWR_LIGHT_PIN 29
 #define PWR_ENCLOSURE_PIN 31

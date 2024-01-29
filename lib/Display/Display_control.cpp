@@ -75,7 +75,7 @@ void lcdml_menu_control(void)
     {
         // check if the button was pressed for a shortly time or a long time
 
-        //falling edge, button pressed, no action
+        // falling edge, button pressed, no action
         if (g_LCDML_button == LOW && g_LCDML_CONTROL_button_prev == HIGH)
         {
             g_LCDML_CONTROL_button_prev = LOW;
