@@ -14,6 +14,11 @@ bool COND_light_off()
     return ledLighting.isOn();
 }
 
+bool COND_light_on()
+{
+    return !ledLighting.isOn();
+}
+
 bool COND_mode_auto_off()
 {
     return enclosurePower.isAutoOff();
