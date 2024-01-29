@@ -10,12 +10,12 @@
 #include "CachedPullupInput.hpp"
 #include "Display.hpp"
 
-#define INIT_PULLUPINPUT(INPUT, PIN)\
-    pinMode(PIN, INPUT_PULLUP);\
+#define INIT_PULLUPINPUT(INPUT, PIN) \
+    pinMode(PIN, INPUT_PULLUP);      \
     INPUT.init(PIN);
 
-#define INIT_LOW_RELAIS(RELAIS, PIN)\
-    pinMode(PIN, OUTPUT);\
+#define INIT_LOW_RELAIS(RELAIS, PIN) \
+    pinMode(PIN, OUTPUT);            \
     RELAIS.init(PIN, LOW);
 
 // Input
@@ -34,16 +34,18 @@ EnclosurePower enclosurePower = EnclosurePower();
 LEDLighting ledLighting = LEDLighting();
 Ventilation ventilation = Ventilation();
 
-//cppcheck-suppress unusedFunction
+uint32_t currentMillis;
+
+// cppcheck-suppress unusedFunction
 void setup()
 {
     // Set pin modes
-    
+
     // INPUT
     INIT_PULLUPINPUT(printerInput, PRINTER_INPUT_PIN)
     INIT_PULLUPINPUT(externalVentilationSwitch, EXTERNAL_VENTILATION_SWITCH_PIN)
 
-    // OUTPUT    
+    // OUTPUT
     INIT_LOW_RELAIS(powerArduino, PWR_ARDUINO_PIN)
     INIT_LOW_RELAIS(powerLight, PWR_LIGHT_PIN)
     INIT_LOW_RELAIS(powerEnclosure, PWR_ENCLOSURE_PIN)
@@ -56,17 +58,19 @@ void setup()
     display_setup();
 }
 
-//cppcheck-suppress unusedFunction
+// cppcheck-suppress unusedFunction
 void loop()
 {
+    currentMillis = millis();
+
     // Read
-    printerInput.read(millis());
+    printerInput.read(currentMillis);
     externalVentilationSwitch.read();
 
     // Process
-    enclosurePower.tick(millis(), printerInput.isOn());
-    ledLighting.tick(millis());
-    ventilation.tick(millis(), externalVentilationSwitch.isOn(), printerInput.isOn());
+    enclosurePower.tick(currentMillis, printerInput.isOn());
+    ledLighting.tick(currentMillis);
+    ventilation.tick(currentMillis, externalVentilationSwitch.isOn(), printerInput.isOn());
 
     display_loop();
 
@@ -78,7 +82,7 @@ void loop()
     powerExternalVentilation.setState(ventilation.isExternalVentilationReq());
 }
 
-//cppcheck-suppress unusedFunction
+// cppcheck-suppress unusedFunction
 void shutdown(void)
 {
     enclosurePower.setOff();
