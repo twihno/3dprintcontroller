@@ -1,20 +1,17 @@
 {
-    "name": "PullupInput",
-    "version": "1.0.0",
-    "authors": [
-        {
-            "name": "Adrian Reuter",
-            "email": "reutera@in.tum.de",
-            "maintainer": true
-        },
-        {
-            "name": "Thomas Schuster",
-            "email": "twihno@gmail.com"
-        }
-    ],
-    "license": "MIT",
-    "platforms": [
-        "atmelavr",
-        "native"
-    ]
+  "name": "PullupInput",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Adrian Reuter",
+      "email": "reutera@in.tum.de",
+      "maintainer": true
+    },
+    {
+      "name": "Thomas Schuster",
+      "email": "twihno@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "platforms": ["atmelavr", "native"]
 }
