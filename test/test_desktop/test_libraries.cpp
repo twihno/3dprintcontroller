@@ -28,6 +28,8 @@ void setUp(void)
     ArduinoFakeReset();
 }
 
+void tearDown(void) {}
+
 void test_relay(void)
 {
     When(Method(ArduinoFake(), pinMode)).AlwaysReturn();
@@ -166,7 +168,7 @@ void test_enclosurepower_auto_off(void)
 {
     EnclosurePower enclosurePower;
 
-    TEST_ASSERT_TRUE(enclosurePower.isAutoOff())
+    TEST_ASSERT_TRUE(enclosurePower.isAutoOff());
 
     // Initially enclosurePower is required to be off
     TEST_ASSERT_FALSE(enclosurePower.isPowerActive());
@@ -254,7 +256,7 @@ void test_enclosurepower_auto_off(void)
     // Test if shutdown triggers
     enclosurePower.setOn();
     enclosurePower.tick(0, true);
-    TEST_ASSERT_TRUE(enclosurePower.isAutoOff())
+    TEST_ASSERT_TRUE(enclosurePower.isAutoOff());
 
     enclosurePower.tick(0, false);
     TEST_ASSERT_TRUE(enclosurePower.isPowerActive());
@@ -342,7 +344,7 @@ void test_enclosurepower_copycat(void)
 
     // Turn off autoOff
     enclosurePower.disableAutoOff();
-    TEST_ASSERT_FALSE(enclosurePower.isAutoOff())
+    TEST_ASSERT_FALSE(enclosurePower.isAutoOff());
 
     // Test if we can turn on enclosurePower
     enclosurePower.setOn();
@@ -425,7 +427,7 @@ void test_enclosurepower_copycat(void)
     // Test if printer standby is detected
     enclosurePower.setOn();
     enclosurePower.tick(0, true);
-    TEST_ASSERT_FALSE(enclosurePower.isAutoOff())
+    TEST_ASSERT_FALSE(enclosurePower.isAutoOff());
 
     enclosurePower.tick(0, false);
     TEST_ASSERT_TRUE(enclosurePower.isPowerActive());
@@ -537,22 +539,43 @@ void test_ledlighting(void)
     // Initially ledLighting is required to be off
     TEST_ASSERT_FALSE(ledLighting.isOn());
 
-    // Test if we can turn on ledLighting
-    ledLighting.setOn(0);
+    // Test if we can turn on ledLighting (temporary)
+    ledLighting.setOnTemporary(0);
     TEST_ASSERT_TRUE(ledLighting.isOn());
 
     // Test if we can turn off ledLighting
     ledLighting.setOff();
     TEST_ASSERT_FALSE(ledLighting.isOn());
 
-    // Test if ledLighting turns off after timeout has been reached
-    ledLighting.setOn(0);
+    // Test if we can turn on ledLighting (permanent)
+    ledLighting.setOnPermanent();
+    TEST_ASSERT_TRUE(ledLighting.isOn());
+
+    // Test if we can turn off ledLighting
+    ledLighting.setOff();
+    TEST_ASSERT_FALSE(ledLighting.isOn());
+
+    // Test if ledLighting turns off after timeout has been reached (temporary mode)
+    ledLighting.setOnTemporary(0);
     ledLighting.tick(LEDLIGHTING_TIMEOUT - 1);
     TEST_ASSERT_TRUE(ledLighting.isOn());
     ledLighting.tick(LEDLIGHTING_TIMEOUT);
     TEST_ASSERT_TRUE(ledLighting.isOn());
     ledLighting.tick(LEDLIGHTING_TIMEOUT + 1);
     TEST_ASSERT_FALSE(ledLighting.isOn());
+
+    // Reset state
+    ledLighting.setOff();
+    TEST_ASSERT_FALSE(ledLighting.isOn());
+
+    // Test if ledLighting doesn't turn off (permanent mode)
+    ledLighting.setOnPermanent();
+    ledLighting.tick(LEDLIGHTING_TIMEOUT - 1);
+    TEST_ASSERT_TRUE(ledLighting.isOn());
+    ledLighting.tick(LEDLIGHTING_TIMEOUT);
+    TEST_ASSERT_TRUE(ledLighting.isOn());
+    ledLighting.tick(LEDLIGHTING_TIMEOUT + 1);
+    TEST_ASSERT_TRUE(ledLighting.isOn());
 }
 
 int main(int argc, char **argv)

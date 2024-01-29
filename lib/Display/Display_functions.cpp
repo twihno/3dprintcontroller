@@ -22,7 +22,7 @@ void your_function_name(uint8_t param)
         // uncomment this line when the menu should go back to the last called position
         // this could be a cursor position or the an active menu function
         // GBA means => go back advanced
-        //LCDML.FUNC_setGBA() 
+        //LCDML.FUNC_setGBA()
         //
     }
     if(LCDML.FUNC_loop())           // ****** LOOP *********
@@ -229,7 +229,7 @@ void mFunc_turnOnLight(uint8_t param)
     {
         // remmove compiler warnings when the param variable is not used:
         LCDML_UNUSED(param);
-        ledLighting.setOn(millis());
+        ledLighting.setOnTemporary(millis());
 
         // update menu to add "Light off"
         menu_item_turn_off_light_visible = true;

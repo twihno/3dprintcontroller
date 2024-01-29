@@ -5,7 +5,8 @@
 
 enum class LEDLightingState
 {
-    ON,
+    ON_TEMPORARY,
+    ON_PERMANENT,
     OFF
 };
 
@@ -18,7 +19,8 @@ private:
 public:
     LEDLighting();
     void tick(uint32_t millis);
-    void setOn(uint32_t millis);
+    void setOnTemporary(uint32_t millis);
+    void setOnPermanent();
     void setOff();
     bool isOn();
     uint32_t getTimestamp();

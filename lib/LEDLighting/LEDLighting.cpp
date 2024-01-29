@@ -10,7 +10,7 @@ LEDLighting::LEDLighting()
 
 void LEDLighting::tick(uint32_t millis)
 {
-    if (isOn() && (millis > timestamp))
+    if (this->state == LEDLightingState::ON_TEMPORARY && (millis > timestamp))
     {
         this->state = LEDLightingState::OFF;
         this->timestamp = 0;
@@ -19,12 +19,17 @@ void LEDLighting::tick(uint32_t millis)
 
 bool LEDLighting::isOn()
 {
-    return this->state == LEDLightingState::ON;
+    return this->state != LEDLightingState::OFF;
 }
 
-void LEDLighting::setOn(uint32_t millis)
+void LEDLighting::setOnPermanent()
 {
-    this->state = LEDLightingState::ON;
+    this->state = LEDLightingState::ON_PERMANENT;
+}
+
+void LEDLighting::setOnTemporary(uint32_t millis)
+{
+    this->state = LEDLightingState::ON_TEMPORARY;
     this->timestamp = millis + LEDLIGHTING_TIMEOUT;
 }
 
